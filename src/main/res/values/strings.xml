@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Recycler View</string>
+    <string name="addplace">Add Place</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dialog_file_rename">Rename</string>
+    <string name="dialog_file_delete">Delete</string>
+    <string name="dialog_title_options">Options</string>
+    <string name="dialog_action_cancel">Cancel</string>
+    <string name="dialog_title_rename">Rename</string>
+    <string name="dialog_action_ok">OK</string>
+</resources>
