@@ -1,4 +1,4 @@
-/*lol*/
+/*lol lol*/
 package info.androidhive.recyclerview;
 
 import android.content.Context;
