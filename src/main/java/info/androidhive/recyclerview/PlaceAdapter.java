@@ -114,6 +114,7 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
                 ArrayList<String> entrys = new ArrayList<String>();
                 entrys.add(context.getString(R.string.dialog_file_rename));
                 entrys.add(context.getString(R.string.dialog_file_delete));
+                System.out.print("hello");
 
                 final CharSequence[] items = entrys.toArray(new CharSequence[entrys.size()]);
 
