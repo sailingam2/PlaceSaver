@@ -1,8 +1,10 @@
 package info.androidhive.recyclerview;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -10,6 +12,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -28,6 +32,8 @@ import com.google.android.gms.location.LocationServices;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddPlace extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -42,7 +48,8 @@ public class AddPlace extends AppCompatActivity implements
     public static Uri selectedImage;
 
     private PlaceDBHelper mDatabase;
-    private static int RESULT_LOAD_IMG = 1;
+    private static int RESULT_LOAD_IMG_FROM_GALLARY = 0;
+    private static int RESULT_LOAD_IMG_FROM_CAMERA = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,9 +117,20 @@ public class AddPlace extends AppCompatActivity implements
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+
+            final List<Intent> cameraIntents = new ArrayList();
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntents.add(galleryIntent);
+            cameraIntents.add(cameraIntent);
+
+            final Intent intentChooser = new Intent();
+            final Intent chooserIntent = Intent.createChooser(intentChooser, "Select Source");
+
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+            startActivityForResult(chooserIntent, 1);//YOUR_SELECT_PICTURE_REQUEST_CODE);
+
         }
     }
 
@@ -120,14 +138,22 @@ public class AddPlace extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         try {
 
-            if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
-                    && null != data) {
+            Log.v("after photo",data.getAction());
 
-                selectedImage = data.getData();
-                Bitmap bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage));
-                saveToInternalStorage(bmp);
+            if(resultCode == RESULT_OK) {
 
-            } else {
+                if (requestCode == RESULT_LOAD_IMG_FROM_GALLARY && data != null) {
+
+                    selectedImage = data.getData();
+                    Bitmap bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage));
+                    saveToInternalStorage(bmp);
+
+                } else if (requestCode == RESULT_LOAD_IMG_FROM_CAMERA && data != null) {
+                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                    saveToInternalStorage(bmp);
+                }
+            }
+            else {
                 Toast.makeText(this, "You haven't picked Image",
                         Toast.LENGTH_LONG).show();
             }

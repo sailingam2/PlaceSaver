@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -114,6 +115,7 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
                 ArrayList<String> entrys = new ArrayList<String>();
                 entrys.add(context.getString(R.string.dialog_file_rename));
                 entrys.add(context.getString(R.string.dialog_file_delete));
+                entrys.add(context.getString(R.string.dialog_file_change_image));
 
                 final CharSequence[] items = entrys.toArray(new CharSequence[entrys.size()]);
 
@@ -127,8 +129,10 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
                             renamePlace(pos);
                         }
                         if(option == 1){
-
                             deletePlace(pos);
+                        }
+                        if(option == 2){
+                            changeImage(pos);
                         }
                     }
                 });
@@ -158,9 +162,9 @@ return false;
         ImageView imageBox = (ImageView) view.findViewById(R.id.imageBox);
         Log.v("imagepath",place.getImagePath());
         imageBox.setImageBitmap(loadImageFromStorage(place.getImagePath()));
-        ImageBoxBuilder.setTitle(place.getName());
         ImageBoxBuilder.setView(view);
         ImageBoxBuilder.setCancelable(true);
+        ImageBoxBuilder.create();
         ImageBoxBuilder.show();
 
     }
@@ -169,6 +173,11 @@ return false;
 
         mDatabase.removeItemWithId(getItem(position).getId());
         notifyItemRemoved(position);
+    }
+
+    private void changeImage(int pos) {
+
+
     }
 
     private void renamePlace(final int position) {
