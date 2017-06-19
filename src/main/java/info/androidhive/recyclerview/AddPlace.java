@@ -45,11 +45,10 @@ public class AddPlace extends AppCompatActivity implements
     ImageButton image;
     Button add;
 
-    public static Uri selectedImage;
+    public Uri selectedImage;
 
     private PlaceDBHelper mDatabase;
-    private static int RESULT_LOAD_IMG_FROM_GALLARY = 0;
-    private static int RESULT_LOAD_IMG_FROM_CAMERA = 1;
+    private static int RESULT_LOAD_IMG = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +128,7 @@ public class AddPlace extends AppCompatActivity implements
 
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
 
-            startActivityForResult(chooserIntent, 1);//YOUR_SELECT_PICTURE_REQUEST_CODE);
+            startActivityForResult(chooserIntent, RESULT_LOAD_IMG);//YOUR_SELECT_PICTURE_REQUEST_CODE);
 
         }
     }
@@ -138,18 +137,22 @@ public class AddPlace extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         try {
 
-            Log.v("after photo",data.getAction());
+            //Log.v("after photo",data.getAction());
 
             if(resultCode == RESULT_OK) {
 
-                if (requestCode == RESULT_LOAD_IMG_FROM_GALLARY && data != null) {
+                Log.v("inresult","inresult");
+               Log.v("reqco",data+"");
 
+
+                if(data != null && data.getExtras() == null){
                     selectedImage = data.getData();
                     Bitmap bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage));
                     saveToInternalStorage(bmp);
 
-                } else if (requestCode == RESULT_LOAD_IMG_FROM_CAMERA && data != null) {
-                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                }else if(data.getExtras() != null) {
+                    Log.v("cam photo",":");
+                    Bitmap bmp =  (Bitmap) data.getExtras().get("data");
                     saveToInternalStorage(bmp);
                 }
             }

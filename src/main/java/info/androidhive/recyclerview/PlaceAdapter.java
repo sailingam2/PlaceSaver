@@ -1,5 +1,6 @@
 package info.androidhive.recyclerview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,12 +26,20 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
+import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> implements OnDatabaseChangedListener{
 
 
+    private URI selectedImage;
+    private static int RESULT_LOAD_IMG = 0;
     private PlaceDBHelper mDatabase;
     private Context context;
     private Place place;
@@ -106,6 +117,7 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                         Uri.parse(String.format("http://maps.google.com/maps?daddr=%f,%f",place.getLatitude(),place.getLongitude())));
                 context.startActivity(intent);
+
             }
         });
 
@@ -169,6 +181,34 @@ return false;
 
     }
 
+    public class ImageGetterAsyncTask extends AsyncTask<Void, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            final List<Intent> cameraIntents = new ArrayList();
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntents.add(galleryIntent);
+            cameraIntents.add(cameraIntent);
+
+            final Intent intentChooser = new Intent();
+            final Intent chooserIntent = Intent.createChooser(intentChooser, "Select Source");
+
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+            ((Activity)context).startActivityForResult(chooserIntent,0);//YOUR_SELECT_PICTURE_REQUEST_CODE);
+
+        }
+    }
+
     private void deletePlace(int position) {
 
         mDatabase.removeItemWithId(getItem(position).getId());
@@ -177,14 +217,14 @@ return false;
 
     private void changeImage(int pos) {
 
-
+        new ImageGetterAsyncTask().execute();
     }
 
     private void renamePlace(final int position) {
 
         AlertDialog.Builder renamePlaceBuilder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.dialog_rename_place,null);
+        View view = inflater.inflate(R.layout.dialog_rename_Place,null);
 
         final EditText input = (EditText)view.findViewById(R.id.new_name);
 
