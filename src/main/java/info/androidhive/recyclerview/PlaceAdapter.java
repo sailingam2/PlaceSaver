@@ -181,34 +181,6 @@ return false;
 
     }
 
-    public class ImageGetterAsyncTask extends AsyncTask<Void, Void, Void> {
-
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            final List<Intent> cameraIntents = new ArrayList();
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            cameraIntents.add(galleryIntent);
-            cameraIntents.add(cameraIntent);
-
-            final Intent intentChooser = new Intent();
-            final Intent chooserIntent = Intent.createChooser(intentChooser, "Select Source");
-
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
-
-            ((Activity)context).startActivityForResult(chooserIntent,0);//YOUR_SELECT_PICTURE_REQUEST_CODE);
-
-        }
-    }
-
     private void deletePlace(int position) {
 
         mDatabase.removeItemWithId(getItem(position).getId());
@@ -217,14 +189,19 @@ return false;
 
     private void changeImage(int pos) {
 
-        new ImageGetterAsyncTask().execute();
+        Intent imageChanger = new Intent(context,ImageChanger.class);
+        imageChanger.putExtra("name",place.getName());
+        imageChanger.putExtra("latitude",place.getLatitude());
+        imageChanger.putExtra("longitude",place.getLongitude());
+        ((Activity)context).startActivity(imageChanger);
+
     }
 
     private void renamePlace(final int position) {
 
         AlertDialog.Builder renamePlaceBuilder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.dialog_rename_Place,null);
+        View view = inflater.inflate(R.layout.dialog_rename_place,null);
 
         final EditText input = (EditText)view.findViewById(R.id.new_name);
 

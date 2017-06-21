@@ -105,7 +105,7 @@ public class AddPlace extends AppCompatActivity implements
 
     }
 
-    public class ImageGetterAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class ImageGetterAsyncTask extends AsyncTask<Void, Void, Void> {
 
 
         @Override
