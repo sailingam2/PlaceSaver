@@ -12,4 +12,6 @@
     <string name="dialog_action_ok">OK</string>
     <string name="dialog_file_change_image">Change Image</string>
     <string name="change">Change</string>
+    <string name="right">right</string>
+    <string name="left">left</string>
 </resources>
