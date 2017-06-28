@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,13 +43,16 @@ public class AddPlace extends AppCompatActivity implements
     Location mLastLocation;
 
     EditText name, latitude, longitude;
-    ImageButton image;
+    ImageView image;
     Button add;
 
     public Uri selectedImage;
 
     private PlaceDBHelper mDatabase;
     private static int RESULT_LOAD_IMG = 0;
+
+    private final int imageHeight = 120;
+    private final int imageWidth = 120;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,7 @@ public class AddPlace extends AppCompatActivity implements
         name = (EditText) findViewById(R.id.newname);
         latitude = (EditText) findViewById(R.id.newlatitude);
         longitude = (EditText) findViewById(R.id.newlongitude);
-        image = (ImageButton) findViewById(R.id.addimage);
+        image = (ImageView) findViewById(R.id.imageView);
         add = (Button) findViewById(R.id.addbutton);
 
         add.setOnClickListener(new View.OnClickListener() {
@@ -228,8 +232,9 @@ public class AddPlace extends AppCompatActivity implements
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, fos);
+        //    bitmapImage = Bitmap.createScaledBitmap(bitmapImage,imageWidth,imageHeight,true);
             image.setImageBitmap(bitmapImage);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

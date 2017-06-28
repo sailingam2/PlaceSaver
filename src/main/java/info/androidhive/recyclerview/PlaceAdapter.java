@@ -44,6 +44,8 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
     private Context context;
     private Place place;
     private LinearLayoutManager llm;
+    private final int imageHeight = 120;
+    private final int imageWidth  = 120;
     @Override
     public void onNewDatabaseEntryAdded() {
 
@@ -99,7 +101,8 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
         holder.name.setText(place.getName());
         Log.v("retrieve",place.getImagePath().toString());
 
-        holder.image.setImageBitmap(loadImageFromStorage(place.getImagePath()));
+        Bitmap b = Bitmap.createScaledBitmap(loadImageFromStorage(place.getImagePath()),imageWidth,imageHeight,true);
+        holder.image.setImageBitmap(b);
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

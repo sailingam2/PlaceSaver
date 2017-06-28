@@ -107,17 +107,25 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
+                case 1:
+                rootView = inflater.inflate(R.layout.fragment_main, container, false);
 //            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
-            recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(rootView.getContext());
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.addItemDecoration(new DividerItemDecoration(rootView.getContext(), LinearLayoutManager.VERTICAL));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            mAdapter = new PlaceAdapter(rootView.getContext(),(LinearLayoutManager)mLayoutManager);
-            recyclerView.setAdapter(mAdapter);
+                recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(rootView.getContext());
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.addItemDecoration(new DividerItemDecoration(rootView.getContext(), LinearLayoutManager.VERTICAL));
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                mAdapter = new PlaceAdapter(rootView.getContext(), (LinearLayoutManager) mLayoutManager);
+                recyclerView.setAdapter(mAdapter);
+                    break;
+                case 2:
+                    break;
+
+            }
             return rootView;
         }
 

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,7 +31,9 @@ public class ImageChanger extends AppCompatActivity {
     Button returnButton;
 
     private static final int RESULT_LOAD_IMG = 0 ;
-    ImageButton image;
+    private final int imageHeight = 300;
+    private final int imageWidth = 300;
+    ImageView image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +42,7 @@ public class ImageChanger extends AppCompatActivity {
         this.name = imageChanger.getStringExtra("name");
         this.latitude = imageChanger.getDoubleExtra("latitude",0.0);
         this.longitude = imageChanger.getDoubleExtra("longitude",0.0);
-        image = (ImageButton)findViewById(R.id.imageButton);
+        image = (ImageView) findViewById(R.id.imageView2);
         returnButton = (Button)findViewById(R.id.returnButton);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,7 +121,8 @@ public class ImageChanger extends AppCompatActivity {
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, fos);
+            bitmapImage = Bitmap.createScaledBitmap(bitmapImage,imageWidth,imageHeight,true);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             image.setImageBitmap(bitmapImage);
         } catch (Exception e) {
             e.printStackTrace();
