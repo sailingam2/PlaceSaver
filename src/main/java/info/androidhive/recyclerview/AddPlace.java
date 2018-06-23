@@ -1,10 +1,8 @@
 package info.androidhive.recyclerview;
 
 import android.Manifest;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -13,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -22,7 +19,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -122,7 +118,7 @@ public class AddPlace extends AppCompatActivity implements
             super.onPostExecute(aVoid);
 
             final List<Intent> cameraIntents = new ArrayList();
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             cameraIntents.add(galleryIntent);
             cameraIntents.add(cameraIntent);
@@ -143,24 +139,23 @@ public class AddPlace extends AppCompatActivity implements
 
             //Log.v("after photo",data.getAction());
 
-            if(resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
 
-                Log.v("inresult","inresult");
-               Log.v("reqco",data+"");
+                Log.v("inresult", "inresult");
+                Log.v("reqco", data + "");
 
 
-                if(data != null && data.getExtras() == null){
+                if (data != null && data.getExtras() == null) {
                     selectedImage = data.getData();
                     Bitmap bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage));
                     saveToInternalStorage(bmp);
 
-                }else if(data.getExtras() != null) {
-                    Log.v("cam photo",":");
-                    Bitmap bmp =  (Bitmap) data.getExtras().get("data");
+                } else if (data.getExtras() != null) {
+                    Log.v("cam photo", ":");
+                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
                     saveToInternalStorage(bmp);
                 }
-            }
-            else {
+            } else {
                 Toast.makeText(this, "You haven't picked Image",
                         Toast.LENGTH_LONG).show();
             }
@@ -223,16 +218,16 @@ public class AddPlace extends AppCompatActivity implements
         }
     }
 
-    private void saveToInternalStorage(Bitmap bitmapImage){
+    private void saveToInternalStorage(Bitmap bitmapImage) {
         // path to /data/data/yourapp/app_data/imageDir
         // Create imageDir
-        File mypath=new File(MainActivity.directory,name.getText().toString()+latitude.getText().toString()+longitude.getText().toString()+".jpg");
+        File mypath = new File(MainActivity.directory, name.getText().toString() + latitude.getText().toString() + longitude.getText().toString() + ".jpg");
 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
-        //    bitmapImage = Bitmap.createScaledBitmap(bitmapImage,imageWidth,imageHeight,true);
+            //    bitmapImage = Bitmap.createScaledBitmap(bitmapImage,imageWidth,imageHeight,true);
             image.setImageBitmap(bitmapImage);
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         } catch (Exception e) {

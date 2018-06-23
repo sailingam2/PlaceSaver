@@ -7,7 +7,7 @@ public class Place {
     private String imagePath;
     private int id;
 
-    public Place(){
+    public Place() {
 
     }
 

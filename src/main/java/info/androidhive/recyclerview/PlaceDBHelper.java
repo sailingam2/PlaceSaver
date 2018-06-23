@@ -12,7 +12,7 @@ import android.util.Log;
  * Created by midhun on 5/13/17.
  */
 
-public class PlaceDBHelper extends SQLiteOpenHelper{
+public class PlaceDBHelper extends SQLiteOpenHelper {
 
     private Context mContext;
     public static final String DAtABASE_NAME = "placeName.db";
@@ -20,7 +20,7 @@ public class PlaceDBHelper extends SQLiteOpenHelper{
 
     private static OnDatabaseChangedListener mOnDatabaseChangedListener;
 
-    public static abstract class PlaceDBHelperItem implements BaseColumns{
+    public static abstract class PlaceDBHelperItem implements BaseColumns {
 
         public static final String TABLE_NAME = "placeName";
         public static final String COLUMN_NAME_LATITUDE = "latitude";
@@ -35,8 +35,8 @@ public class PlaceDBHelper extends SQLiteOpenHelper{
     private static final String INT_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + PlaceDBHelperItem.TABLE_NAME + "("+
-                    PlaceDBHelperItem._ID + INT_TYPE+" PRIMARY KEY" + COMMA_SEP +
+            "CREATE TABLE " + PlaceDBHelperItem.TABLE_NAME + "(" +
+                    PlaceDBHelperItem._ID + INT_TYPE + " PRIMARY KEY" + COMMA_SEP +
                     PlaceDBHelperItem.COLUMN_NAME_PLACENAME + TEXT_TYPE + COMMA_SEP +
                     PlaceDBHelperItem.COLUMN_NAME_IMAGEPATH + TEXT_TYPE + COMMA_SEP +
                     PlaceDBHelperItem.COLUMN_NAME_LATITUDE + REAL_TYPE + COMMA_SEP +
@@ -45,9 +45,8 @@ public class PlaceDBHelper extends SQLiteOpenHelper{
     private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + PlaceDBHelperItem.TABLE_NAME;
 
 
-
     public PlaceDBHelper(Context context) {
-        super(context,DAtABASE_NAME,null,DATABASE_VERSION);
+        super(context, DAtABASE_NAME, null, DATABASE_VERSION);
         this.mContext = context;
     }
 
@@ -68,17 +67,19 @@ public class PlaceDBHelper extends SQLiteOpenHelper{
 
     }
 
-    public int getCount(){
+    public int getCount() {
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {PlaceDBHelperItem._ID};
-        Cursor c = db.query(PlaceDBHelperItem.TABLE_NAME,projection,null,null,null,null,null);
+        Cursor c = db.query(PlaceDBHelperItem.TABLE_NAME, projection, null, null, null, null, null);
         int count = c.getCount();
         return count;
     }
 
-    public Context getContext(){ return mContext;}
+    public Context getContext() {
+        return mContext;
+    }
 
-    public Place getItemAt(int position){
+    public Place getItemAt(int position) {
 
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
@@ -89,8 +90,8 @@ public class PlaceDBHelper extends SQLiteOpenHelper{
                 PlaceDBHelperItem.COLUMN_NAME_LONGITUDE
         };
 
-        Cursor c = db.query(PlaceDBHelperItem.TABLE_NAME,projection,null,null,null,null,null);
-        if(c.moveToPosition(position)){
+        Cursor c = db.query(PlaceDBHelperItem.TABLE_NAME, projection, null, null, null, null, null);
+        if (c.moveToPosition(position)) {
             Place p = new Place();
             p.setId(c.getInt(c.getColumnIndex(PlaceDBHelperItem._ID)));
             p.setName(c.getString(c.getColumnIndex(PlaceDBHelperItem.COLUMN_NAME_PLACENAME)));
@@ -104,23 +105,23 @@ public class PlaceDBHelper extends SQLiteOpenHelper{
 
     }
 
-    public void removeItemWithId(int id){
-        Log.v("DB id",""+(id-1));
+    public void removeItemWithId(int id) {
+        Log.v("DB id", "" + (id - 1));
         SQLiteDatabase db = getWritableDatabase();
         String[] whereArgs = {String.valueOf(id)};
-        db.delete(PlaceDBHelperItem.TABLE_NAME,PlaceDBHelperItem._ID+"=?", whereArgs);
+        db.delete(PlaceDBHelperItem.TABLE_NAME, PlaceDBHelperItem._ID + "=?", whereArgs);
     }
 
-    public long addPlace(String placeName,double latitude,double longitude, String imagePath){
+    public long addPlace(String placeName, double latitude, double longitude, String imagePath) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(PlaceDBHelperItem.COLUMN_NAME_PLACENAME,placeName);
-        cv.put(PlaceDBHelperItem.COLUMN_NAME_LATITUDE,latitude);
-        cv.put(PlaceDBHelperItem.COLUMN_NAME_LONGITUDE,longitude);
-        cv.put(PlaceDBHelperItem.COLUMN_NAME_IMAGEPATH,imagePath);
-        long rowID = db.insert(PlaceDBHelperItem.TABLE_NAME,null,cv);
+        cv.put(PlaceDBHelperItem.COLUMN_NAME_PLACENAME, placeName);
+        cv.put(PlaceDBHelperItem.COLUMN_NAME_LATITUDE, latitude);
+        cv.put(PlaceDBHelperItem.COLUMN_NAME_LONGITUDE, longitude);
+        cv.put(PlaceDBHelperItem.COLUMN_NAME_IMAGEPATH, imagePath);
+        long rowID = db.insert(PlaceDBHelperItem.TABLE_NAME, null, cv);
 
-        if(mOnDatabaseChangedListener !=null){
+        if (mOnDatabaseChangedListener != null) {
             mOnDatabaseChangedListener.onNewDatabaseEntryAdded();
         }
 
@@ -128,24 +129,24 @@ public class PlaceDBHelper extends SQLiteOpenHelper{
 
     }
 
-    public void renameItem(Place place, String newName){
+    public void renameItem(Place place, String newName) {
 
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(PlaceDBHelperItem.COLUMN_NAME_PLACENAME,newName);
-        db.update(PlaceDBHelperItem.TABLE_NAME,cv,PlaceDBHelperItem._ID+ "=" + place.getId(),null);
-        if(mOnDatabaseChangedListener!=null){
+        cv.put(PlaceDBHelperItem.COLUMN_NAME_PLACENAME, newName);
+        db.update(PlaceDBHelperItem.TABLE_NAME, cv, PlaceDBHelperItem._ID + "=" + place.getId(), null);
+        if (mOnDatabaseChangedListener != null) {
             mOnDatabaseChangedListener.onDatabaseEntryRenamed();
         }
     }
 
-    public void changeImage(Place place, String newImagePath){
+    public void changeImage(Place place, String newImagePath) {
 
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(PlaceDBHelperItem.COLUMN_NAME_IMAGEPATH,newImagePath);
-        db.update(PlaceDBHelperItem.TABLE_NAME,cv,PlaceDBHelperItem._ID+ "=" + place.getId(),null);
-        if(mOnDatabaseChangedListener!=null){
+        cv.put(PlaceDBHelperItem.COLUMN_NAME_IMAGEPATH, newImagePath);
+        db.update(PlaceDBHelperItem.TABLE_NAME, cv, PlaceDBHelperItem._ID + "=" + place.getId(), null);
+        if (mOnDatabaseChangedListener != null) {
             mOnDatabaseChangedListener.onDatabaseImageChanged();
         }
     }

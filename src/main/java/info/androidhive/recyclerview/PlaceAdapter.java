@@ -6,10 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,21 +18,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
-
-class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> implements OnDatabaseChangedListener{
+class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> implements OnDatabaseChangedListener {
 
 
     private URI selectedImage;
@@ -45,7 +35,8 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
     private Place place;
     private LinearLayoutManager llm;
     private final int imageHeight = 120;
-    private final int imageWidth  = 120;
+    private final int imageWidth = 120;
+
     @Override
     public void onNewDatabaseEntryAdded() {
 
@@ -69,7 +60,7 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
-            image = (ImageView)view.findViewById(R.id.image);
+            image = (ImageView) view.findViewById(R.id.image);
             cardView = (CardView) view.findViewById(R.id.cardview);
         }
     }
@@ -97,16 +88,20 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final int pos = position;
-       place = getItem(position);
+        place = getItem(position);
         holder.name.setText(place.getName());
-        Log.v("retrieve",place.getImagePath().toString());
+        Log.v("retrieve", place.getImagePath().toString());
 
-        Bitmap b = Bitmap.createScaledBitmap(loadImageFromStorage(place.getImagePath()),imageWidth,imageHeight,true);
-        holder.image.setImageBitmap(b);
+        try {
+            Bitmap b = Bitmap.createScaledBitmap(loadImageFromStorage(place.getImagePath()), imageWidth, imageHeight, true);
+            holder.image.setImageBitmap(b);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.v("position",""+pos);
+                Log.v("position", "" + pos);
                 showBox(pos);
             }
         });
@@ -114,11 +109,11 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
 
             @Override
             public void onClick(View view) {
-                Log.v("position",""+pos);
+                Log.v("position", "" + pos);
                 Place place = getItem(pos);
-                Log.v("cardpos",""+pos);
+                Log.v("cardpos", "" + pos);
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse(String.format("http://maps.google.com/maps?daddr=%f,%f",place.getLatitude(),place.getLongitude())));
+                        Uri.parse(String.format("http://maps.google.com/maps?daddr=%f,%f", place.getLatitude(), place.getLongitude())));
                 context.startActivity(intent);
 
             }
@@ -140,13 +135,13 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int option) {
-                        if(option == 0){
+                        if (option == 0) {
                             renamePlace(pos);
                         }
-                        if(option == 1){
+                        if (option == 1) {
                             deletePlace(pos);
                         }
-                        if(option == 2){
+                        if (option == 2) {
                             changeImage(pos);
                         }
                     }
@@ -163,7 +158,7 @@ class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.MyViewHolder> imple
                 AlertDialog alert = builder.create();
                 alert.show();
 
-return false;
+                return false;
             }
         });
     }
@@ -173,9 +168,9 @@ return false;
         Place place = getItem(pos);
         AlertDialog.Builder ImageBoxBuilder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.dialog_image_box,null);
+        View view = inflater.inflate(R.layout.dialog_image_box, null);
         ImageView imageBox = (ImageView) view.findViewById(R.id.imageBox);
-        Log.v("imagepath",place.getImagePath());
+        Log.v("imagepath", place.getImagePath());
         imageBox.setImageBitmap(loadImageFromStorage(place.getImagePath()));
         ImageBoxBuilder.setView(view);
         ImageBoxBuilder.setCancelable(true);
@@ -192,11 +187,11 @@ return false;
 
     private void changeImage(int pos) {
 
-        Intent imageChanger = new Intent(context,ImageChanger.class);
-        imageChanger.putExtra("name",place.getName());
-        imageChanger.putExtra("latitude",place.getLatitude());
-        imageChanger.putExtra("longitude",place.getLongitude());
-        ((Activity)context).startActivity(imageChanger);
+        Intent imageChanger = new Intent(context, ImageChanger.class);
+        imageChanger.putExtra("name", place.getName());
+        imageChanger.putExtra("latitude", place.getLatitude());
+        imageChanger.putExtra("longitude", place.getLongitude());
+        ((Activity) context).startActivity(imageChanger);
 
     }
 
@@ -204,27 +199,27 @@ return false;
 
         AlertDialog.Builder renamePlaceBuilder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.dialog_rename_place,null);
+        View view = inflater.inflate(R.layout.dialog_rename_place, null);
 
-        final EditText input = (EditText)view.findViewById(R.id.new_name);
+        final EditText input = (EditText) view.findViewById(R.id.new_name);
 
         renamePlaceBuilder.setTitle(context.getString(R.string.dialog_title_rename));
         renamePlaceBuilder.setCancelable(true);
         renamePlaceBuilder.setPositiveButton(context.getString(R.string.dialog_action_ok),
-                new DialogInterface.OnClickListener(){
+                new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        try{
+                        try {
                             String newName = input.getText().toString();
-                            String oldName = MainActivity.imageDirPath + "/" +place.getName()+place.getLatitude()+place.getLongitude();
+                            String oldName = MainActivity.imageDirPath + "/" + place.getName() + place.getLatitude() + place.getLongitude();
 
-                            mDatabase.renameItem(getItem(position),newName);
+                            mDatabase.renameItem(getItem(position), newName);
                             notifyItemChanged(position);
-                           Log.v("directory",MainActivity.imageDirPath);
-                        }catch (Exception e){
-                            Log.v("rename","failed");
+                            Log.v("directory", MainActivity.imageDirPath);
+                        } catch (Exception e) {
+                            Log.v("rename", "failed");
                         }
                     }
                 });
@@ -243,16 +238,13 @@ return false;
     }
 
 
-    private Bitmap loadImageFromStorage(String imagePath)
-    {
+    private Bitmap loadImageFromStorage(String imagePath) {
 
         try {
-            File f=new File(MainActivity.imageDirPath, imagePath);
+            File f = new File(MainActivity.imageDirPath, imagePath);
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
             return b;
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
